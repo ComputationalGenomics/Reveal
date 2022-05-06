@@ -1,15 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Laxmi"
-  given-names: "Parida"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
-- family-names: "Claudia"
-  given-names: "Haferlach"
-- family-names: "Kahn"
-  given-names: "Rhrissorrakrai"
+- family-names: "Parida"
+  given-names: "Laxmi"
+  orcid: "https://orcid.org/0000-0002-7872-5074"
+- family-names: "Haferlach"
+  given-names: "Claudia"
+- family-names: "Rhrissorrakrai"
+  given-names: "Kahn"
+  orcid: "http://orcid.org/0000-0002-1567-9090"
 - family-names: "Utro"
   given-names: "Filippo"
+  orcid: "https://orcid.org/0000-0003-3226-7642"
 - family-names: "Levovitz"
   given-names: "Chaya"
 - family-names: "Kern"
@@ -31,7 +33,7 @@ authors:
 title: "Dark-matter matters: Discriminating subtle blood cancers using the darkest DNA"
 type: article
 doi: journal.pcbi.1007332
-url: "https://doi.org/10.1371/journal.pcbi.1007332}"
+url: "https://doi.org/10.1371/journal.pcbi.1007332"
 journal: "PLOS Computational Biology"
 month: 08
 start: 1 # First page number
