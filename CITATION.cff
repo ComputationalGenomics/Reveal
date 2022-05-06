@@ -1,43 +1,49 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
+title: "ReVeaL"
 authors:
-- family-names: "Parida"
-  given-names: "Laxmi"
-  orcid: "https://orcid.org/0000-0002-7872-5074"
-- family-names: "Haferlach"
-  given-names: "Claudia"
-- family-names: "Rhrissorrakrai"
-  given-names: "Kahn"
-  orcid: "http://orcid.org/0000-0002-1567-9090"
-- family-names: "Utro"
-  given-names: "Filippo"
-  orcid: "https://orcid.org/0000-0003-3226-7642"
-- family-names: "Levovitz"
-  given-names: "Chaya"
-- family-names: "Kern"
-  given-names: "Wolfgang"
-- family-names: "Nadarajah"
-  given-names: "Niroshan"
-- family-names: "Twardziok"
-  given-names: "Sven"
-- family-names: "Hutter"
-  given-names: "Stephan"
-- family-names: "Meggendorfer"
-  given-names: "Manja"
-- family-names: "Walter"
-  given-names: "Wencke"
-- family-names: "Baer"
-  given-names: "Constance"
-- family-names: "Haferlach"
-  given-names: "Torsten"
-title: "Dark-matter matters: Discriminating subtle blood cancers using the darkest DNA"
-type: article
-doi: journal.pcbi.1007332
-url: "https://doi.org/10.1371/journal.pcbi.1007332"
-journal: "PLOS Computational Biology"
-month: 08
-start: 1 # First page number
-end: 12 # Last page number
-issue: 8
-volume: 15
-year: 2019
+ - family-names: "Utro"
+   given-names: "Filippo"
+   orcid: "https://orcid.org/0000-0003-3226-7642"
+preferred-citation:
+  authors:
+  - family-names: "Parida"
+    given-names: "Laxmi"
+    orcid: "https://orcid.org/0000-0002-7872-5074"
+  - family-names: "Haferlach"
+    given-names: "Claudia"
+  - family-names: "Rhrissorrakrai"
+    given-names: "Kahn"
+    orcid: "https://orcid.org/0000-0002-1567-9090"
+  - family-names: "Utro"
+    given-names: "Filippo"
+    orcid: "https://orcid.org/0000-0003-3226-7642"
+  - family-names: "Levovitz"
+    given-names: "Chaya"
+  - family-names: "Kern"
+    given-names: "Wolfgang"
+  - family-names: "Nadarajah"
+    given-names: "Niroshan"
+  - family-names: "Twardziok"
+    given-names: "Sven"
+  - family-names: "Hutter"
+    given-names: "Stephan"
+  - family-names: "Meggendorfer"
+    given-names: "Manja"
+  - family-names: "Walter"
+    given-names: "Wencke"
+  - family-names: "Baer"
+    given-names: "Constance"
+  - family-names: "Haferlach"
+    given-names: "Torsten"
+  title: "Dark-matter matters: Discriminating subtle blood cancers using the darkest DNA"
+  type: article
+  #doi: "journal.pcbi.1007332"
+  url: "https://doi.org/10.1371/journal.pcbi.1007332"
+  journal: "PLOS Computational Biology"
+  month: 08
+  start: 1 # First page number
+  end: 12 # Last page number
+  issue: 8
+  volume: 15
+  year: 2019
