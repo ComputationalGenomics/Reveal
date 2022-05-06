@@ -19,7 +19,12 @@ Please cite the following article if you use ReVeaL:
 
 Parida L, Haferlach C, Rhrissorrakrai K, Utro F, Levovitz C, Kern W, et al. (2019) Dark-matter matters: Discriminating subtle blood cancers using the darkest DNA. PLoS Comput Biol 15(8): e1007332. https://doi.org/10.1371/journal.pcbi.1007332
 
+## Dependencies
+All dependencies are listed in the [requirements](requirements.txt) file. 
 
+```
+pip install -r requirements.txt
+```
 
 # Input file and formats
 
