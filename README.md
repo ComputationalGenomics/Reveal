@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 # Input file and formats
 
-The sample_info.tsv file is a tab separated file contaning in each row: the sample id, chromosome, the alteration start and stop.
+The sample_info.tsv file is a tab separated file contaning in each row: the sample id, chromosome, the alteration start and stop coordinates.
 
 Example:
 
