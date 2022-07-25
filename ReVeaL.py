@@ -35,6 +35,8 @@ def build_parser():
                         description="Size of the window for the mutation load computation, if not provided the full "
                                     "length of each region (see regions_size option) is used ")
     parser.add_argument('--permuted', '-p', default=False, action="store_true", required=False)
+    parser.add_argument('--moment', '-m', type=int, required=False, default=1, choices=range(1, 4),
+                        description="Moment to compute for the shingle construction (default value 1 (mean))")
     parser.add_argument('--regions_size', '-r', type=float, required=True,
                         description="File containing the region's size per row")
     parser.add_argument('--store_out_folder', '-o', type=str, required=True, help='Name of the output folder.')
@@ -95,19 +97,27 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
     return mutation_load_pivot
 
 
-def _compute_shingle(mutation_load, list_samples, id_sample):
+def _compute_shingle(mutation_load, list_samples, id_sample, moment_type=1):
     unique, counts = np.unique(list_samples, return_counts=True)
     tmp = mutation_load.loc[unique, :].copy()
     for i in range(0, len(counts)):
         if counts[i] > 1:
             tmp = tmp.append(mutation_load.loc[unique[i], :], sort=False)
-    moment1 = pd.DataFrame(tmp.mean())
+    
+    if (moment_type == 1):
+        moment1 = pd.DataFrame(tmp.mean())
+    elif (moment_type == 2):
+        moment1 = pd.DataFrame(tmp.var())
+    elif (moment_type == 3):
+        moment1 = pd.DataFrame(tmp.skew())
+    else:
+        moment1 = pd.DataFrame(tmp.kurt())
     moment1['samples'] = id_sample
 
     return moment1
 
 
-def generate_train_test(train_samples, test_samples, store_out_folder, pre_computed, chromosome):
+def generate_train_test(train_samples, test_samples, store_out_folder, pre_computed, chromosome, moment_type):
     """
     This function compute the shingles, then generating the train and test sample
     :param train_samples:
@@ -127,12 +137,12 @@ def generate_train_test(train_samples, test_samples, store_out_folder, pre_compu
 
     for key, samples_in_train in train_samples.Keys():
         id_sample = 'Train_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
-        moment1 = _compute_shingle(mutation_load, samples_in_train, id_sample)
+        moment1 = _compute_shingle(mutation_load, samples_in_train, id_sample, moment_type)
         shingles = shingles.append(moment1.T)
 
     for key, samples_in_test in test_samples.Keys():
         id_sample = 'Test_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
-        moment1 = _compute_shingle(mutation_load, samples_in_test, id_sample)
+        moment1 = _compute_shingle(mutation_load, samples_in_test, id_sample, moment_type)
         shingles = shingles.append(moment1.T)
 
     shingles.to_csv(os.path.join(store_out_folder, 'shingle_'+str(chromosome)+'.csv'))
@@ -190,5 +200,5 @@ if __name__ == "__main__":
 
     r = Parallel(n_jobs=22, verbose=5)(delayed(generate_train_test)(label_info, train_samples, test_samples,
                                                                     test_train_sizes, store_out_folder,
-                                                                    args.pre_computed, chr_interest)
+                                                                    args.pre_computed, chr_interest, args.moment)
                                        for chr_interest in chrs)
