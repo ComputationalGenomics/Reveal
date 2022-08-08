@@ -20,25 +20,25 @@ from joblib import Parallel, delayed
 def build_parser():
     parser = argparse.ArgumentParser(description="ReVeaL: Rare Variant Learning")
     parser.add_argument('--sample_info', '-s', type=str, required=True,
-                        description="File containing the samples alteration")
+                        help="File containing the samples alteration")
     parser.add_argument('--label_info', '-l', type=str, required=True,
-                        description="File containing the label for each samples")
+                        help="File containing the label for each samples")
     parser.add_argument('--num_fold', '-nf', type=int, required=False, default=10,
-                        description="Number of fold to be generated")
+                        help="Number of fold to be generated")
     parser.add_argument('--sample_size', '-ns', type=int, required=False, default=35,
-                        description="Number of samples to be selected for the shingle construction")
+                        help="Number of samples to be selected for the shingle construction")
     parser.add_argument('--test_train', '-tt', type=str, required=True,
-                        description="File containing the train/test number ratio")
+                        help="File containing the train/test number ratio")
     parser.add_argument('--pre_computed', '-pre', default=None, required=False,
-                        description="Indicated if the ")
+                        help="Indicated if the ")
     parser.add_argument('--window_size', '-w', type=int, required=False, default=-1,
-                        description="Size of the window for the mutation load computation, if not provided the full "
+                        help="Size of the window for the mutation load computation, if not provided the full "
                                     "length of each region (see regions_size option) is used ")
     parser.add_argument('--permuted', '-p', default=False, action="store_true", required=False)
     parser.add_argument('--moment', '-m', type=int, required=False, default=1, choices=range(1, 4),
-                        description="Moment to compute for the shingle construction (default value 1 (mean))")
-    parser.add_argument('--regions_size', '-r', type=float, required=True,
-                        description="File containing the region's size per row")
+                        help="Moment to compute for the shingle construction (default value 1 (mean))")
+    parser.add_argument('--regions_size', '-r', type=str, required=True,
+                        help="File containing the region's size per row")
     parser.add_argument('--store_out_folder', '-o', type=str, required=True, help='Name of the output folder.')
 
     if len(sys.argv) < 7:
