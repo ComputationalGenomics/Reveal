@@ -199,6 +199,6 @@ if __name__ == "__main__":
                 test_samples[(fold, i, row_tr['phenotype'])] = selected_samples
 
     r = Parallel(n_jobs=22, verbose=5)(delayed(generate_train_test)(train_samples, test_samples,
-                                                                    test_train_sizes, store_out_folder,
-                                                                    args.pre_computed, chr_interest, args.moment)
+                                                                    store_out_folder, args.pre_computed, 
+                                                                    chr_interest, args.moment)
                                        for chr_interest in chrs)
