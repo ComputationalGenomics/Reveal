@@ -60,7 +60,7 @@ CASE, 10, 5
 CASE2, 10, 5 
 CONTROL, 10, 5
 ```
-The regions.tsv is a tab separeted file containg the region of interest. 
+The regions.tsv is a tab separeted file containg the region of interest. Regions for GRCh38.p14 are reported in the regions folder.
 
 Example
 
@@ -69,3 +69,4 @@ chr start stop
 1 0 224999719
 2 0 237712649
 ```
+
