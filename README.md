@@ -33,7 +33,7 @@ The sample_info.tsv file is a tab separated file contaning in each row: the samp
 Example:
 
 ```
-samples chromosome  start stop
+samples chr  start stop
 sample_1 1 20  21
 sample_1  2 2 10
 sample_2  1 5 10
