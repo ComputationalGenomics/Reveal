@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
         Parallel(n_jobs=22, verbose=5)(delayed(create_prep_files)(sample_info[sample_info['chr'] == chr_interest],
                                                                   regions[regions['chr'] == chr_interest],
-                                                                  store_out_folder, args.window_size
+                                                                  store_out_folder, chr_interest, args.window_size
                                                                   ) for chr_interest in chromosomes)
 
     chrs = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
