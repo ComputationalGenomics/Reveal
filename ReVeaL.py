@@ -81,9 +81,9 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
                 tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
                                          'count': [0]*len(missing_sample_in_window)})
                 
-                mutation_load_data_bin = pd.concat([mutation_load_data_bin, tmp_data])
+                mutation_load_data_bin = mutation_load_data_bin.append(tmp_data)
                 mutation_load_data_bin['window'] = [(chromosome, start, stop, bin_window)] * len(mutation_load_data_bin)
-                mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_bin])
+                mutation_load_data = mutation_load_data.append(mutation_load_data_bin)
         else:
             count_in_window = _compute_count_in_region(sample_data, start, stop)
             mutation_load_data['samples'] = count_in_window['samples']
@@ -91,7 +91,7 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
             missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
             tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
                                      'count': [0] * len(missing_sample_in_window)})
-            mutation_load_data = pd.concat([mutation_load_data, tmp_data])
+            mutation_load_data = mutation_load_data.append(tmp_data)
             mutation_load_data['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data)
 
     mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot_table('samples', 'window',
