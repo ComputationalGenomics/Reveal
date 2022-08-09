@@ -71,9 +71,11 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
         stop = row_region['stop']
 
         if window_size > 0:
-            end = window_size
+            end = start + window_size
             for bin_window in range(0, math.ceil((stop-start)/window_size)):
                 end = end + (bin_window * window_size)
+                if end>stop:
+                    end = stop
                 count_in_window = _compute_count_in_region(sample_data, start, end)
                 mutation_load_data_bin = pd.DataFrame()
                 mutation_load_data_bin['samples'] = count_in_window['samples']
