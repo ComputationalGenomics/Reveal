@@ -51,7 +51,7 @@ def _compute_count_in_region(sample_data, start, stop):
     b = sample_data[(sample_data['stop'] > start) & (sample_data['stop'] <= stop)]  # partially contained
     c = sample_data[(sample_data['start'] >= start) & (sample_data['start'] <= stop)]  # partially contained
     #d = sample_data[(sample_data['start'] >= start) & (sample_data['stop'] >= stop)]  # partially contained
-    a = a.append(b).append(c).drop_duplicates() #.append(d)
+    a =  pd.concat([a, b, c]).drop_duplicates() #a.append(b).append(c).drop_duplicates() #.append(d)
     return a.groupby('samples').count().reset_index()
 
 
@@ -71,6 +71,7 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
         stop = row_region['stop']
 
         if window_size > 0:
+            end = window_size
             for bin_window in range(0, math.ceil((stop-start)/window_size)):
                 end = end + (bin_window * window_size)
                 count_in_window = _compute_count_in_region(sample_data, start, end)
@@ -78,20 +79,20 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
                 mutation_load_data_bin['samples'] = count_in_window['samples']
                 mutation_load_data_bin['count'] = count_in_window['start']
                 missing_sample_in_window = set(samples).difference((set(mutation_load_data_bin['samples'])))
-                tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
+                tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
                                          'count': [0]*len(missing_sample_in_window)})
                 
-                mutation_load_data_bin = mutation_load_data_bin.append(tmp_data)
+                mutation_load_data_bin = pd.concat([mutation_load_data_bin, tmp_data])
                 mutation_load_data_bin['window'] = [(chromosome, start, stop, bin_window)] * len(mutation_load_data_bin)
-                mutation_load_data = mutation_load_data.append(mutation_load_data_bin)
+                mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_bin])
         else:
             count_in_window = _compute_count_in_region(sample_data, start, stop)
             mutation_load_data['samples'] = count_in_window['samples']
             mutation_load_data['count'] = count_in_window['start']
             missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
-            tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
+            tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
                                      'count': [0] * len(missing_sample_in_window)})
-            mutation_load_data = mutation_load_data.append(tmp_data)
+            mutation_load_data = pd.concat([mutation_load_data, tmp_data])
             mutation_load_data['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data)
 
     mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot_table('samples', 'window',
@@ -105,7 +106,7 @@ def _compute_shingle(mutation_load, list_samples, id_sample, moment_type=1):
     tmp = mutation_load.loc[unique, :].copy()
     for i in range(0, len(counts)):
         if counts[i] > 1:
-            tmp = tmp.append(mutation_load.loc[unique[i], :], sort=False)
+            tmp = pd.concat([tmp, mutation_load.loc[unique[i], :]])
     
     if (moment_type == 1):
         moment1 = pd.DataFrame(tmp.mean())
@@ -141,12 +142,12 @@ def generate_train_test(train_samples, test_samples, store_out_folder, pre_compu
     for key, samples_in_train in train_samples.Keys():
         id_sample = 'Train_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_train, id_sample, moment_type)
-        shingles = shingles.append(moment1.T)
+        shingles = pd.concat([shingles, moment1.T])
 
     for key, samples_in_test in test_samples.Keys():
         id_sample = 'Test_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_test, id_sample, moment_type)
-        shingles = shingles.append(moment1.T)
+        shingles = pd.concat([shingles, moment1.T])
 
     shingles.to_csv(os.path.join(store_out_folder, 'shingle_'+str(chromosome)+'.csv'))
 
@@ -195,7 +196,7 @@ if __name__ == "__main__":
             size_test = row_tr['Test']
             samples = label_info[label_info['phenotype'] == row_tr['phenotype']]['samples'].tolist()
             for i in range(0, size_train):
-                selected_samples = np.random.choice(samples, args.sample_size, replace=True)
+                selected_samples = np.random.choice(samples, args.sample_size, replafce=True)
                 train_samples[(fold, i, row_tr['phenotype'])] = selected_samples
             for i in range(0, size_test):
                 selected_samples = np.random.choice(samples, args.sample_size, replace=True)
