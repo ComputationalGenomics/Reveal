@@ -50,8 +50,8 @@ def _compute_count_in_region(sample_data, start, stop):
     a = sample_data[(sample_data['start'] >= start) & (sample_data['stop'] <= stop)]  # fully contained
     b = sample_data[(sample_data['stop'] > start) & (sample_data['stop'] <= stop)]  # partially contained
     c = sample_data[(sample_data['start'] >= start) & (sample_data['start'] <= stop)]  # partially contained
-    d = sample_data[(sample_data['start'] >= start) & (sample_data['stop'] >= stop)]  # partially contained
-    a = a.append(b).append(c).append(d).drop_duplicates()
+    #d = sample_data[(sample_data['start'] >= start) & (sample_data['stop'] >= stop)]  # partially contained
+    a = a.append(b).append(c).drop_duplicates() #.append(d)
     return a.groupby('samples').count().reset_index()
 
 
@@ -71,25 +71,27 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
         stop = row_region['stop']
 
         if window_size > 0:
-            end = window_size
             for bin_window in range(0, math.ceil((stop-start)/window_size)):
                 end = end + (bin_window * window_size)
                 count_in_window = _compute_count_in_region(sample_data, start, end)
-                mutation_load_data['samples'] = count_in_window['samples']
-                mutation_load_data['count'] = count_in_window['start']
-                missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
-                tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
+                mutation_load_data_bin = pd.DataFrame()
+                mutation_load_data_bin['samples'] = count_in_window['samples']
+                mutation_load_data_bin['count'] = count_in_window['start']
+                missing_sample_in_window = set(samples).difference((set(mutation_load_data_bin['samples'])))
+                tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
                                          'count': [0]*len(missing_sample_in_window)})
-                mutation_load_data = mutation_load_data.append(tmp_data)
-                mutation_load_data['window'] = [(chromosome, start, stop, bin_window)] * len(mutation_load_data)
+                
+                mutation_load_data_bin = pd.concat([mutation_load_data_bin, tmp_data])
+                mutation_load_data_bin['window'] = [(chromosome, start, stop, bin_window)] * len(mutation_load_data_bin)
+                mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_bin])
         else:
             count_in_window = _compute_count_in_region(sample_data, start, stop)
             mutation_load_data['samples'] = count_in_window['samples']
             mutation_load_data['count'] = count_in_window['start']
             missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
-            tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
+            tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
                                      'count': [0] * len(missing_sample_in_window)})
-            mutation_load_data = mutation_load_data.append(tmp_data)
+            mutation_load_data = pd.concat([mutation_load_data, tmp_data])
             mutation_load_data['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data)
 
     mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot_table('samples', 'window',
@@ -168,8 +170,8 @@ if __name__ == "__main__":
         sample_info = pd.read_csv(args.sample_info, sep='\t')
         chromosomes = sample_info['chr'].unique()
         regions = pd.read_csv(args.regions_size, sep='\t')
-        Parallel(n_jobs=22, verbose=5)(delayed(create_prep_files)(sample_info[sample_info['chr'] == chr_interest], 
-                                                                  sample_info['samples'].unique(),
+
+        Parallel(n_jobs=22, verbose=5)(delayed(create_prep_files)(sample_info[sample_info['chr'] == chr_interest], sample_info['samples'].unique(),
                                                                   regions[regions['chr'] == chr_interest],
                                                                   store_out_folder, chr_interest, args.window_size
                                                                   ) for chr_interest in chromosomes)
