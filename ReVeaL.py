@@ -71,6 +71,7 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
         stop = row_region['stop']
 
         if window_size > 0:
+            end = window_size
             for bin_window in range(0, math.ceil((stop-start)/window_size)):
                 end = end + (bin_window * window_size)
                 count_in_window = _compute_count_in_region(sample_data, start, end)
