@@ -168,7 +168,7 @@ if __name__ == "__main__":
         chromosomes = sample_info['chr'].unique()
         regions = pd.read_csv(args.regions_size, sep='\t')
 
-        Parallel(n_jobs=22, verbose=5)(delayed(create_prep_files)(sample_info[sample_info['chr'] == chr_interest],
+        Parallel(n_jobs=22, verbose=5)(delayed(create_prep_files)(sample_info[sample_info['chr'] == chr_interest], sample_info['samples'].unique(),
                                                                   regions[regions['chr'] == chr_interest],
                                                                   store_out_folder, chr_interest, args.window_size
                                                                   ) for chr_interest in chromosomes)
