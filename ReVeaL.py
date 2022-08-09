@@ -79,7 +79,7 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
                 mutation_load_data_bin['samples'] = count_in_window['samples']
                 mutation_load_data_bin['count'] = count_in_window['start']
                 missing_sample_in_window = set(samples).difference((set(mutation_load_data_bin['samples'])))
-                tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
+                tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
                                          'count': [0]*len(missing_sample_in_window)})
                 
                 mutation_load_data_bin = pd.concat([mutation_load_data_bin, tmp_data])
@@ -90,7 +90,7 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
             mutation_load_data['samples'] = count_in_window['samples']
             mutation_load_data['count'] = count_in_window['start']
             missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
-            tmp_data = pd.DataFrame({'sample': list(missing_sample_in_window),
+            tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
                                      'count': [0] * len(missing_sample_in_window)})
             mutation_load_data = pd.concat([mutation_load_data, tmp_data])
             mutation_load_data['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data)
