@@ -87,15 +87,17 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
                 mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_bin])
         else:
             count_in_window = _compute_count_in_region(sample_data, start, stop)
-            mutation_load_data['samples'] = count_in_window['samples']
-            mutation_load_data['count'] = count_in_window['start']
-            missing_sample_in_window = set(samples).difference((set(mutation_load_data['samples'])))
+            mutation_load_data_region = pd.DataFrame()
+            mutation_load_data_region['samples'] = count_in_window['samples']
+            mutation_load_data_region['count'] = count_in_window['start']
+            missing_sample_in_window = set(samples).difference((set(mutation_load_data_region['samples'])))
             tmp_data = pd.DataFrame({'samples': list(missing_sample_in_window),
                                      'count': [0] * len(missing_sample_in_window)})
-            mutation_load_data = pd.concat([mutation_load_data, tmp_data])
-            mutation_load_data['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data)
+            mutation_load_data_region = pd.concat([mutation_load_data_region, tmp_data])
+            mutation_load_data_region['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data_region)
+            mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_region])
 
-    mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot_table('samples', 'window',
+    mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot('samples', 'window',
                                                                                             'count').fillna(0)
     mutation_load_pivot.to_csv(os.path.join(out_folder, 'mutation_load'+str(chromosome)+'.csv'))
     return mutation_load_pivot
