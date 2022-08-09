@@ -51,7 +51,7 @@ def _compute_count_in_region(sample_data, start, stop):
     b = sample_data[(sample_data['stop'] > start) & (sample_data['stop'] <= stop)]  # partially contained
     c = sample_data[(sample_data['start'] >= start) & (sample_data['start'] <= stop)]  # partially contained
     #d = sample_data[(sample_data['start'] >= start) & (sample_data['stop'] >= stop)]  # partially contained
-    a = a.append(b).append(c).drop_duplicates() #.append(d)
+    a =  pd.concat([a, b, c]).drop_duplicates() #a.append(b).append(c).drop_duplicates() #.append(d)
     return a.groupby('samples').count().reset_index()
 
 
@@ -105,7 +105,7 @@ def _compute_shingle(mutation_load, list_samples, id_sample, moment_type=1):
     tmp = mutation_load.loc[unique, :].copy()
     for i in range(0, len(counts)):
         if counts[i] > 1:
-            tmp = tmp.append(mutation_load.loc[unique[i], :], sort=False)
+            tmp = pd.concat([tmp, mutation_load.loc[unique[i], :]])
     
     if (moment_type == 1):
         moment1 = pd.DataFrame(tmp.mean())
@@ -141,12 +141,12 @@ def generate_train_test(train_samples, test_samples, store_out_folder, pre_compu
     for key, samples_in_train in train_samples.Keys():
         id_sample = 'Train_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_train, id_sample, moment_type)
-        shingles = shingles.append(moment1.T)
+        shingles = pd.concat([shingles, moment1.T])
 
     for key, samples_in_test in test_samples.Keys():
         id_sample = 'Test_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_test, id_sample, moment_type)
-        shingles = shingles.append(moment1.T)
+        shingles = pd.concat([shingles, moment1.T])
 
     shingles.to_csv(os.path.join(store_out_folder, 'shingle_'+str(chromosome)+'.csv'))
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
             size_test = row_tr['Test']
             samples = label_info[label_info['phenotype'] == row_tr['phenotype']]['samples'].tolist()
             for i in range(0, size_train):
-                selected_samples = np.random.choice(samples, args.sample_size, replace=True)
+                selected_samples = np.random.choice(samples, args.sample_size, replafce=True)
                 train_samples[(fold, i, row_tr['phenotype'])] = selected_samples
             for i in range(0, size_test):
                 selected_samples = np.random.choice(samples, args.sample_size, replace=True)
