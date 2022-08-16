@@ -39,6 +39,8 @@ sample_1  2 2 10
 sample_2  1 5 10
 ```
 
+only chromosome from 1 to 22 are considered.
+
 The labels.csv is a comma separated file containing in each row the phenotype of the samples.
 
 Example
