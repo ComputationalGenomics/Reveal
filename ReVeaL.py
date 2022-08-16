@@ -30,7 +30,7 @@ def build_parser():
     parser.add_argument('--test_train', '-tt', type=str, required=True,
                         help="File containing the train/test number ratio")
     parser.add_argument('--pre_computed', '-pre', default=None, required=False,
-                        help="Indicated if the ")
+                        help="Indicated if the mutation load were previously precomputed")
     parser.add_argument('--window_size', '-w', type=int, required=False, default=-1,
                         help="Size of the window for the mutation load computation, if not provided the full "
                                     "length of each region (see regions_size option) is used ")
@@ -98,8 +98,8 @@ def create_prep_files(sample_data, samples, regions_size, out_folder, chromosome
             mutation_load_data_region = pd.concat([mutation_load_data_region, tmp_data])
             mutation_load_data_region['window'] = [(chromosome, start, stop, -1)] * len(mutation_load_data_region)
             mutation_load_data = pd.concat([mutation_load_data, mutation_load_data_region])
-
-    mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).pivot('samples', 'window',
+            
+    mutation_load_pivot = mutation_load_data.sort_values(['samples', 'window']).drop_duplicates().pivot('samples', 'window',
                                                                                             'count').fillna(0)
     mutation_load_pivot.to_csv(os.path.join(out_folder, 'mutation_load'+str(chromosome)+'.csv'))
     return mutation_load_pivot
@@ -120,7 +120,7 @@ def _compute_shingle(mutation_load, list_samples, id_sample, moment_type=1):
         moment1 = pd.DataFrame(tmp.skew())
     else:
         moment1 = pd.DataFrame(tmp.kurt())
-    moment1['samples'] = id_sample
+    moment1.columns = [id_sample]
 
     return moment1
 
@@ -140,15 +140,15 @@ def generate_train_test(train_samples, test_samples, store_out_folder, pre_compu
     else:
         path_pre = store_out_folder
 
-    mutation_load = pd.read_csv(os.path.join(path_pre,  'mutation_load' + str(chromosome) + '.csv'))
+    mutation_load = pd.read_csv(os.path.join(path_pre,  'mutation_load' + str(chromosome) + '.csv'), index_col=0)
     shingles = pd.DataFrame()
-
-    for key, samples_in_train in train_samples.Keys():
+    
+    for key, samples_in_train in train_samples.items():
         id_sample = 'Train_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_train, id_sample, moment_type)
         shingles = pd.concat([shingles, moment1.T])
 
-    for key, samples_in_test in test_samples.Keys():
+    for key, samples_in_test in test_samples.items():
         id_sample = 'Test_'+str(key[1])+'_fold_'+str(key[0])+'_'+key[2]
         moment1 = _compute_shingle(mutation_load, samples_in_test, id_sample, moment_type)
         shingles = pd.concat([shingles, moment1.T])
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(filename=os.path.join(store_out_folder, 'ReVeaL.log'), level=logging.INFO)
 
-    if args.pre_computed is not None:
+    if args.pre_computed is None:
         logging.info('Analyzing sample_file: %s', args.sample_info, )
 
         sample_info = pd.read_csv(args.sample_info, sep='\t')
@@ -200,7 +200,7 @@ if __name__ == "__main__":
             size_test = row_tr['Test']
             samples = label_info[label_info['phenotype'] == row_tr['phenotype']]['samples'].tolist()
             for i in range(0, size_train):
-                selected_samples = np.random.choice(samples, args.sample_size, replafce=True)
+                selected_samples = np.random.choice(samples, args.sample_size, replace=True)
                 train_samples[(fold, i, row_tr['phenotype'])] = selected_samples
             for i in range(0, size_test):
                 selected_samples = np.random.choice(samples, args.sample_size, replace=True)
